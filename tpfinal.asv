@@ -24,18 +24,15 @@ rossler = @(t,x) [-x(2) - x(3);
 [~, y] = ode45(rossler, t_span, xi_1);
 [~, z] = ode45(rossler, t_span, xi_2);
 
-%% Diagrama de fase
-figure(1);
-plot3(x(:, 1), x(:, 2), x(:, 3), 'g-', 'LineWidth', 1.5); hold on;
-plot3(y(:, 1), y(:, 2), y(:, 3), 'b--', 'LineWidth', 1.5);
-plot3(z(:, 1), z(:, 2), z(:, 3), 'r-', 'LineWidth', 1.5);
-plot3(xi_0(1), xi_0(2), xi_0(3), 'r*', 'MarkerSize',10,'MarkerFaceColor', 'g'); % Inicio x0
-plot3(xi_1(1), xi_1(2), xi_1(3), 'go', 'MarkerFaceColor', 'b'); % Inicio x1
-plot3(xi_2(1), xi_2(2), xi_2(3), 'bo', 'MarkerFaceColor', 'r'); % Inicio x2
+%% Gráfico
+figure;
+plot3(x(:,1), x(:,2), x(:,3), 'r'); hold on;
+plot3(y(:,1), y(:,2), y(:,3), 'g');
+plot3(z(:,1), z(:,2), z(:,3), 'b');
 xlabel('x'); ylabel('y'); zlabel('z');
-title('Diagrama de Fase del Sistema No Lineal');
-legend('Trayectoria 1', 'Trayectoria 2', 'Trayectoria 3', 'Inicio 1', 'Inicio 2', 'Inicio 3');
-grid on; hold off;
+title('Diagrama de Fase del Sistema de Rössler');
+grid on;
+
 %% Puntos de equilibrio
 
 F = @(x) [-x(2) - x(3);
@@ -82,6 +79,11 @@ fprintf('Autovalores x1:\n');
 for i = 1:length(lambda1)
     fprintf(' %.2f + %.2fi\n', real(lambda1(i)), imag(lambda1(i)));
 end
+
+%% Diagrama de fase
+
+
+%% Grafico de trayectorias
 
 
 %% Funcion transferencia
