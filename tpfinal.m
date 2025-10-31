@@ -6,9 +6,10 @@ close all
 a = 0.2; b = 0.2; c = 5.7;
 
 % Condiciones iniciales
-xi_0 = [0 0 0];
-xi_1 = [1 1 1];
-xi_2 = [-1 -1 -1];
+xi_0 = [0.01, -0.03, 0.04]; %antes del primer punto de eq
+xi_1 = [6, -28, 28];%desp del 1ro antes del segundo
+xi_2 = [1 1 1]; %despues del segundo
+
 
 % Ventana temporal
 t_span = linspace(0, 200, 5000);
@@ -99,8 +100,8 @@ disp(J_eval2)
 f_lin2 = @(t, X) J_eval2 * X;
 
 % Perturbación inicial
-X01 = xeq1+0.1;
-X02 = xeq2+0.1;
+X01 = xeq1;
+X02 = xeq2;
 t_span = 0:0.01:50;
 
 % Simulación
