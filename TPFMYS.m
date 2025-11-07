@@ -6,10 +6,11 @@ close all
 %% Parámetros del sistema
 a = 0.2; b = 0.2; c = 5.7;
 
-% Condiciones iniciales
-xi_0 = [0.01, -0.03, 0.04]; %antes del primer punto de eq
-xi_1 = [6, -28, 28];%desp del 1ro antes del segundo
-xi_2 = [1 1 1]; %despues del segundo
+% Condiciones iniciales --> busco un punto donde pueda ver el
+% comportamiento caotico
+xi_0 = [0.01, -0.03, 0.04]; 
+xi_1 = [6, -28, 28];
+xi_2 = [1 1 1]; 
 
 
 % Ventana temporal
@@ -85,7 +86,7 @@ f3 = b + z*(x - c);
 
 Fv = [f1; f2; f3];
 
-% Jacobiano simbólico
+% Jacobiana simbólica
 J = jacobian(Fv, [x y z]);
 disp('Matriz Jacobiana simbólica:')
 disp(J)
@@ -103,14 +104,12 @@ disp(J_eval2)
 
 f_lin2 = @(t, X) J_eval2 * X;
 
-% Perturbación inicial
-X01 = xeq1;
-X02 = xeq2;
-t_span = 0:0.01:50;
+
+t_span = linspace(0, 50, 2000); %para sistema lineal necesito tiempo más corto
 
 % Simulación
-[t, X1] = ode45(f_lin1, t_span, X01);
-[~, X2] = ode45(f_lin2, t_span, X02);
+[t, X1] = ode45(f_lin1, t_span, xeq1);
+[~, X2] = ode45(f_lin2, t_span, xeq2);
 
 % Gráfico
 figure(3);
@@ -137,13 +136,11 @@ disp('Para el segundo punto de equilibrio')
 disp(lambda2)
 
 %% Simulaciones para modelo linealizado - Diagramas de Fase
-t_span = linspace(0, 50, 2000); %para sistema lineal necesito tiempo más corto
-%Punto de equilibrio 1
 
 % Repetición simulaciones con condiciones iniciales originales
 
-% Condiciones iniciales originales (las hacemos columna para restar)
-xi_0_col = xi_0'; % conversión a vector columna   
+% Condiciones iniciales originales (columna para restar)
+xi_0_col = xi_0';  
 xi_1_col = xi_1';
 xi_2_col = xi_2';
 
@@ -261,70 +258,224 @@ grid on;
 
 %% Función Transferencia
 
-% Xeq1
+% primer punto de eq
 % matrices sistema de estados - A,B,C,D
 
-A1 = J_eval1; 
-B1 = [1; 0; 0]; 
-C1 = [1 0 0]; 
-D1 = 0; 
+%comienzo con 1 0 0 para observar la salida de X
+A1 = J_eval1; %xeq1
+A2 = J_eval2; %xeq2
+B = [1; 0; 0]; % B=  matriz de entrada del sistema en espacio de estados -> matriz columnade 3x1 = el sistema tiene 3 estados
+C = [1 0 0]; % C = matriz salida 
+D = 0; % matriz de transmisión directa del sistema -> como no hay se pone 0
 
-[num1, den1] = ss2tf(A1, B1, C1, D1, 1);
+[num1, den1] = ss2tf(A1, B, C, D, 1); %convierte un sistema en espacio de estados a una función de transferencia //resul en vectores
+[num2, den2] = ss2tf(A2, B, C, D, 1);
 
-disp('Coeficientes del Numerador:');
-disp(num1);
-disp('Coeficientes del Denominador:');
-disp(den1);
 
-G1_tf = tf(num1, den1);
+%%%
+% disp('XEQ1' \n,'Coeficientes del Numerador:');
+%disp(num1);
+%disp('Coeficientes del Denominador:');
+%disp(den1);
+
+
+%disp('XEQ2' \n,'Coeficientes del Numerador:');
+%disp(num2);
+%disp('Coeficientes del Denominador:');
+%disp(den2);
+
+
+G1= tf(num1, den1); %crea la función de transferencia a partir de los coeficientes del numerador y denominador obtenidos.
 
 %disp('Función de Transferencia G1(s) [U(s) -> X(s)] para Xeq1:');
 %disp(G1_tf);
 
-%Xeq2
-
-A2 = J_eval2; 
-B2 = [1; 0; 0]; 
-C2 = [1 0 0]; 
-D2 = 0; 
-
-[num2, den2] = ss2tf(A2, B2, C2, D2, 1);
-
-disp('Coeficientes del Numerador:');
-disp(num2);
-disp('Coeficientes del Denominador:');
-disp(den2);
-
-G2_tf = tf(num2, den2);
+G2= tf(num2, den2);
 
 %disp('Función de Transferencia G2(s) [U(s) -> X(s)] para Xeq2:');
 %disp(G2_tf);
 
-%Respuesta al Impulso y al Escalón - Xeq2
+%Y
+B = [0; 1; 0]; 
+C = [0 1 0];
+[num1, den1] = ss2tf(A1, B, C, D); 
+[num2, den2] = ss2tf(A2, B, C, D); 
+H1 = tf(num1, den1); % Función de transferencia
+H2 = tf(num2, den2); % Función de transferencia
+
+%CALCULO PARA Z
+B = [0; 0; 1];
+C = [0 0 1]; 
+[num1, den1] = ss2tf(A1, B, C, D); 
+[num2, den2] = ss2tf(A2, B, C, D); 
+L1 = tf(num1, den1);
+L2 = tf(num2, den2); 
+
+%% Respuesta al Impulso 
 
 %Graficos
 figure(8);
-
-% Subplot 1: Impulso en Xeq1
-subplot(2, 2, 1);
-impulse(G1_tf);
 title('Impulso - Linealizado en Xeq1');
+subplot(3,1,1);
+step(G1, t);
+title('Respuesta al Escalón en X');
+xlabel('Tiempo');
+ylabel('Amplitud');
+grid on;
+subplot(3,1,2);
+step(H1, t);
+title('Respuesta al Escalón en Y');
+xlabel('Tiempo');
+ylabel('Amplitud');
+grid on;
+subplot(3,1,3);
+step(L1, t);
+title('Respuesta al Escalón en Z');
+xlabel('Tiempo');
+ylabel('Amplitud');
 grid on;
 
-% Subplot 2: Escalón en Xeq1
-subplot(2, 2, 2);
-step(G1_tf);
-title('Escalón - Linealizado en Xeq1');
+figure(9)
+subplot(3,1,1);
+step(G2, t);
+title('Respuesta al Escalón en X');
+xlabel('Tiempo');
+ylabel('Amplitud');
+grid on;
+subplot(3,1,2);
+step(H2, t);
+title('Respuesta al Escalón en Y');
+xlabel('Tiempo');
+ylabel('Amplitud');
+grid on;
+subplot(3,1,3);
+step(L2, t);
+title('Respuesta al Escalón en Z');
+xlabel('Tiempo');
+ylabel('Amplitud');
 grid on;
 
-% Subplot 3: Impulso en Xeq2
-subplot(2, 2, 3);
-impulse(G2_tf);
-title('Impulso - Linealizado en Xeq2');
+%% Respuesta al escalón
+figure(10)
+subplot(3,1,1);
+step(G1, t);
+title('Respuesta al Escalón X');
+xlabel('Tiempo');
+ylabel('Amplitud');
+grid on;
+subplot(3,1,2);
+step(H1, t);
+title('Respuesta al Escalón Y');
+xlabel('Tiempo');
+ylabel('Amplitud');
+grid on;
+subplot(3,1,3);
+step(L1, t);
+title('Respuesta al Escalón Z');
+xlabel('Tiempo');
+ylabel('Amplitud');
 grid on;
 
-% Subplot 4: Escalón en Xeq2
-subplot(2, 2, 4);
-step(G2_tf);
-title('Escalón - Linealizado en Xeq2');
+%X2
+figure(11)
+subplot(3,1,1);
+step(G2, t);
+title('Respuesta al Escalón variable X');
+xlabel('Tiempo');
+ylabel('Amplitud');
 grid on;
+subplot(3,1,2);
+step(H2, t);
+title('Respuesta al Escalón variable Y');
+xlabel('Tiempo');
+ylabel('Amplitud');
+grid on;
+subplot(3,1,3);
+step(L2, t);
+title('Respuesta al Escalón variable Z');
+xlabel('Tiempo');
+ylabel('Amplitud');
+grid on;
+
+
+%% Diagrama polos y ceros
+figure(12)
+
+set(gcf, 'Position', [100, 100, 1200, 400]) % Ajusta tamaño de la figura
+
+% Colores y marcadores
+colorPolos = 'r'; % rojo para polos
+colorCeros = 'b'; % azul para ceros
+markerPolos = 'x';
+markerCeros = 'o';
+
+% Subplot para X
+subplot(1,3,1)
+[pG,zG] = pzmap(G1);
+plot(real(pG), imag(pG), markerPolos, 'Color', colorPolos, 'MarkerSize', 8, 'LineWidth', 1.5); hold on;
+plot(real(zG), imag(zG), markerCeros, 'Color', colorCeros, 'MarkerSize', 8, 'LineWidth', 1.5);
+grid on; axis equal;
+title('X (xeq1)', 'FontSize', 12, 'FontWeight', 'bold');
+xlabel('Eje Real'); ylabel('Eje Imaginario');
+legend('Polos', 'Ceros', 'Location', 'best');
+
+% Subplot para Y
+subplot(1,3,2)
+[pH,zH] = pzmap(H1);
+plot(real(pH), imag(pH), markerPolos, 'Color', colorPolos, 'MarkerSize', 8, 'LineWidth', 1.5); hold on;
+plot(real(zH), imag(zH), markerCeros, 'Color', colorCeros, 'MarkerSize', 8, 'LineWidth', 1.5);
+grid on; axis equal;
+title('Y', 'FontSize', 12, 'FontWeight', 'bold');
+xlabel('Eje Real'); ylabel('Eje Imaginario');
+legend('Polos', 'Ceros', 'Location', 'best');
+
+% Subplot para Z
+subplot(1,3,3)
+[pL,zL] = pzmap(L1);
+plot(real(pL), imag(pL), markerPolos, 'Color', colorPolos, 'MarkerSize', 8, 'LineWidth', 1.5); hold on;
+plot(real(zL), imag(zL), markerCeros, 'Color', colorCeros, 'MarkerSize', 8, 'LineWidth', 1.5);
+grid on; axis equal;
+title('Z', 'FontSize', 12, 'FontWeight', 'bold');
+xlabel('Eje Real'); ylabel('Eje Imaginario');
+legend('Polos', 'Ceros', 'Location', 'best');
+
+% Título general
+sgtitle('Diagramas de Polos y Ceros para xeq1 en X, Y y Z', 'FontSize', 14, 'FontWeight', 'bold');
+
+
+
+figure(13)
+set(gcf, 'Position', [100, 100, 1200, 400]) % Ajusta tamaño de la figura
+
+% Subplot para X
+subplot(1,3,1)
+[pG,zG] = pzmap(G2);
+plot(real(pG), imag(pG), markerPolos, 'Color', colorPolos, 'MarkerSize', 8, 'LineWidth', 1.5); hold on;
+plot(real(zG), imag(zG), markerCeros, 'Color', colorCeros, 'MarkerSize', 8, 'LineWidth', 1.5);
+grid on; axis equal;
+title('X (xeq1)', 'FontSize', 12, 'FontWeight', 'bold');
+xlabel('Eje Real'); ylabel('Eje Imaginario');
+legend('Polos', 'Ceros', 'Location', 'best');
+
+% Subplot para Y
+subplot(1,3,2)
+[pH,zH] = pzmap(H2);
+plot(real(pH), imag(pH), markerPolos, 'Color', colorPolos, 'MarkerSize', 8, 'LineWidth', 1.5); hold on;
+plot(real(zH), imag(zH), markerCeros, 'Color', colorCeros, 'MarkerSize', 8, 'LineWidth', 1.5);
+grid on; axis equal;
+title('Y', 'FontSize', 12, 'FontWeight', 'bold');
+xlabel('Eje Real'); ylabel('Eje Imaginario');
+legend('Polos', 'Ceros', 'Location', 'best');
+
+% Subplot para Z
+subplot(1,3,3)
+[pL,zL] = pzmap(L2);
+plot(real(pL), imag(pL), markerPolos, 'Color', colorPolos, 'MarkerSize', 8, 'LineWidth', 1.5); hold on;
+plot(real(zL), imag(zL), markerCeros, 'Color', colorCeros, 'MarkerSize', 8, 'LineWidth', 1.5);
+grid on; axis equal;
+title('Z', 'FontSize', 12, 'FontWeight', 'bold');
+xlabel('Eje Real'); ylabel('Eje Imaginario');
+legend('Polos', 'Ceros', 'Location', 'best');
+
+% Título general
+sgtitle('Diagramas de Polos y Ceros para xeq2 en X, Y y Z', 'FontSize', 14, 'FontWeight', 'bold');
