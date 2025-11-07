@@ -317,46 +317,48 @@ L2 = tf(num2, den2);
 figure(8);
 title('Impulso - Linealizado en Xeq1');
 subplot(3,1,1);
-step(G1, t);
-title('Respuesta al Escalón en X');
+impulse(G1, t);
+title('Respuesta al Impulso en X');
 xlabel('Tiempo');
 ylabel('Amplitud');
 grid on;
 subplot(3,1,2);
-step(H1, t);
-title('Respuesta al Escalón en Y');
+impulse(H1, t);
+title('Respuesta al Impulso en Y');
 xlabel('Tiempo');
 ylabel('Amplitud');
 grid on;
 subplot(3,1,3);
-step(L1, t);
-title('Respuesta al Escalón en Z');
+impulse(L1, t);
+title('Respuesta al Impulso en Z');
 xlabel('Tiempo');
 ylabel('Amplitud');
 grid on;
 
 figure(9)
+title('Impulso - Linealizado en Xeq2');
 subplot(3,1,1);
-step(G2, t);
-title('Respuesta al Escalón en X');
+impulse(G2, t);
+title('Respuesta al Impulso en X');
 xlabel('Tiempo');
 ylabel('Amplitud');
 grid on;
 subplot(3,1,2);
-step(H2, t);
-title('Respuesta al Escalón en Y');
+impulse(H2, t);
+title('Respuesta al Impulso en Y');
 xlabel('Tiempo');
 ylabel('Amplitud');
 grid on;
 subplot(3,1,3);
-step(L2, t);
-title('Respuesta al Escalón en Z');
+impulse(L2, t);
+title('Respuesta al Impulso en Z');
 xlabel('Tiempo');
 ylabel('Amplitud');
 grid on;
 
 %% Respuesta al escalón
 figure(10)
+title('Respuesta al Escalón - Linealizado en Xeq1');
 subplot(3,1,1);
 step(G1, t);
 title('Respuesta al Escalón X');
@@ -378,6 +380,7 @@ grid on;
 
 %X2
 figure(11)
+title('Respuesta al Escalón - Linealizado en Xeq2');
 subplot(3,1,1);
 step(G2, t);
 title('Respuesta al Escalón variable X');
@@ -440,7 +443,7 @@ xlabel('Eje Real'); ylabel('Eje Imaginario');
 legend('Polos', 'Ceros', 'Location', 'best');
 
 % Título general
-sgtitle('Diagramas de Polos y Ceros para xeq1 en X, Y y Z', 'FontSize', 14, 'FontWeight', 'bold');
+sgtitle('Diagramas de Polos y Ceros para Xeq1 en X, Y y Z', 'FontSize', 14, 'FontWeight', 'bold');
 
 
 
@@ -453,7 +456,7 @@ subplot(1,3,1)
 plot(real(pG), imag(pG), markerPolos, 'Color', colorPolos, 'MarkerSize', 8, 'LineWidth', 1.5); hold on;
 plot(real(zG), imag(zG), markerCeros, 'Color', colorCeros, 'MarkerSize', 8, 'LineWidth', 1.5);
 grid on; axis equal;
-title('X (xeq1)', 'FontSize', 12, 'FontWeight', 'bold');
+title('X', 'FontSize', 12, 'FontWeight', 'bold');
 xlabel('Eje Real'); ylabel('Eje Imaginario');
 legend('Polos', 'Ceros', 'Location', 'best');
 
