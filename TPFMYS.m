@@ -25,7 +25,7 @@ rossler = @(t,x) [-x(2) - x(3);
 [~, cond2] = ode45(rossler, t_span, xi_1);
 [~, cond3] = ode45(rossler, t_span, xi_2);
 
-%% Diagrama de fase
+%% TRAYECTORIAS TEMPORALES SISTEMA LINEALIZADO
 n=n+1;
 figure(n);
 plot3(cond1(:, 1), cond1(:, 2), cond1(:, 3), 'g-', 'LineWidth', 1.5); hold on;
@@ -44,6 +44,8 @@ n=n+1;
 figure(n);
 subplot(3,1,1)
 plot(t, cond1(:,1), 'g'); 
+plot(t, cond2(:,1), 'r'); 
+plot(t, cond3(:,1), 'b'); 
 xlabel('Tiempo');
 ylabel('x(t)');
 xlim([0 200]);
@@ -107,6 +109,87 @@ ylabel('z(t)');
 xlim([0 200]);
 grid on;
 
+%% prueba chat
+% Supongamos que ya tienes cond1, cond2, cond3 definidos (trayectorias)
+% y xi_0, xi_1, xi_2 como puntos iniciales.
+
+figure;
+set(gcf,'Color','w'); % Fondo blanco
+
+% Vistas (azimuth, elevation)
+views = [30 30; 0 90; 90 0; 45 45];
+
+for i = 1:4
+    subplot(2,2,i);
+    plot3(cond1(:,1), cond1(:,2), cond1(:,3), 'k-', 'LineWidth', 0.5); hold on;
+    plot3(cond2(:,1), cond2(:,2), cond2(:,3), 'k-', 'LineWidth', 0.5);
+    plot3(cond3(:,1), cond3(:,2), cond3(:,3), 'k-', 'LineWidth', 0.5);
+    
+    % Puntos iniciales (opcional)
+    plot3(xi_0(1), xi_0(2), xi_0(3), 'k*', 'MarkerSize', 6);
+    plot3(xi_1(1), xi_1(2), xi_1(3), 'ko', 'MarkerSize', 4);
+    plot3(xi_2(1), xi_2(2), xi_2(3), 'ko', 'MarkerSize', 4);
+    
+    % Ajustes de ejes
+    xlabel('X'); ylabel('Y'); zlabel('Z');
+    grid on; box on;
+    axis tight;
+    view(views(i,:)); % Cambia la vista
+    title(['Vista ', char('a'+(i-1))]); % Etiqueta (a), (b), (c), (d)
+end
+
+% Exportar en alta resolución
+% print('fase_diagrama_subplots','-dpng','-r300');
+
+%% prube chat
+% Supongamos que ya tienes cond1, cond2, cond3 definidos (trayectorias)
+% y xi_0, xi_1, xi_2 como puntos iniciales.
+
+figure;
+set(gcf,'Color','w'); % Fondo blanco
+
+% Colores para cada condición
+colors = {'g','b','r'}; % verde, azul, rojo
+
+% --- Subplot 1: Plano XY ---
+subplot(2,2,1);
+plot(cond1(:,1), cond1(:,2), 'Color', colors{1}, 'LineWidth', 1.5); hold on;
+plot(cond2(:,1), cond2(:,2), 'Color', colors{2}, 'LineWidth', 1.5);
+plot(cond3(:,1), cond3(:,2), 'Color', colors{3}, 'LineWidth', 1.5);
+plot(xi_0(1), xi_0(2), '*', 'Color', colors{1}, 'MarkerSize', 8);
+plot(xi_1(1), xi_1(2), 'o', 'Color', colors{2}, 'MarkerSize', 6);
+plot(xi_2(1), xi_2(2), 'o', 'Color', colors{3}, 'MarkerSize', 6);
+xlabel('X'); ylabel('Y'); title('Plano XY'); grid on; axis tight;
+
+% --- Subplot 2: Plano ZX ---
+subplot(2,2,2);
+plot(cond1(:,3), cond1(:,1), 'Color', colors{1}, 'LineWidth', 1.5); hold on;
+plot(cond2(:,3), cond2(:,1), 'Color', colors{2}, 'LineWidth', 1.5);
+plot(cond3(:,3), cond3(:,1), 'Color', colors{3}, 'LineWidth', 1.5);
+plot(xi_0(3), xi_0(1), '*', 'Color', colors{1}, 'MarkerSize', 8);
+plot(xi_1(3), xi_1(1), 'o', 'Color', colors{2}, 'MarkerSize', 6);
+plot(xi_2(3), xi_2(1), 'o', 'Color', colors{3}, 'MarkerSize', 6);
+xlabel('Z'); ylabel('X'); title('Plano ZX'); grid on; axis tight;
+
+% --- Subplot 3: Plano YZ ---
+subplot(2,2,3);
+plot(cond1(:,2), cond1(:,3), 'Color', colors{1}, 'LineWidth', 1.5); hold on;
+plot(cond2(:,2), cond2(:,3), 'Color', colors{2}, 'LineWidth', 1.5);
+plot(cond3(:,2), cond3(:,3), 'Color', colors{3}, 'LineWidth', 1.5);
+plot(xi_0(2), xi_0(3), '*', 'Color', colors{1}, 'MarkerSize', 8);
+plot(xi_1(2), xi_1(3), 'o', 'Color', colors{2}, 'MarkerSize', 6);
+plot(xi_2(2), xi_2(3), 'o', 'Color', colors{3}, 'MarkerSize', 6);
+xlabel('Y'); ylabel('Z'); title('Plano YZ'); grid on; axis tight;
+
+% --- Subplot 4: Vista 3D ---
+subplot(2,2,4);
+plot3(cond1(:,1), cond1(:,2), cond1(:,3), 'Color', colors{1}, 'LineWidth', 1.5); hold on;
+plot3(cond2(:,1), cond2(:,2), cond2(:,3), 'Color', colors{2}, 'LineWidth', 1.5);
+plot3(cond3(:,1), cond3(:,2), cond3(:,3), 'Color', colors{3}, 'LineWidth', 1.5);
+plot3(xi_0(1), xi_0(2), xi_0(3), '*', 'Color', colors{1}, 'MarkerSize', 8);
+plot3(xi_1(1), xi_1(2), xi_1(3), 'o', 'Color', colors{2}, 'MarkerSize', 6);
+plot3(xi_2(1), xi_2(2), xi_2(3), 'o', 'Color', colors{3}, 'MarkerSize', 6);
+xlabel('X'); ylabel('Y'); zlabel('Z'); title('Vista 3D');
 
 %% Puntos de equilibrio
 F = @(x) [-x(2) - x(3);
@@ -290,8 +373,6 @@ ylabel('z(t)');
 grid on;
 %% Función Transferencia
 
-% Diagrama de fase 3D para dos sistemas en espacio de estados
-
 %comienzo con 1 0 0 para observar la salida de X
 A1 = J_eval1; %xeq1
 A2 = J_eval2; %xeq2
@@ -304,18 +385,6 @@ D = [0 0]; % matriz de transmisión directa del sistema -> como no hay se pone 0
 
 [num2_in1, den2] = ss2tf(A2, B, C, D, 1); 
 [num2_in2, ~]   = ss2tf(A2, B, C, D, 2); 
-
-%%%
-% disp('XEQ1' \n,'Coeficientes del Numerador:');
-%disp(num1);
-%disp('Coeficientes del Denominador:');
-%disp(den1);
-
-
-%disp('XEQ2' \n,'Coeficientes del Numerador:');
-%disp(num2);
-%disp('Coeficientes del Denominador:');
-%disp(den2);
 
 % Crea la función de transferencia a partir de los coeficientes del numerador y denominador obtenidos.
 % x1eq
@@ -330,22 +399,6 @@ G2_in2 = tf(num2_in2, den2);
 
 %disp('Función de Transferencia G2(s) [U(s) -> X(s)] para Xeq2:');
 %disp(G2_tf);
-
-figure;
-bode(G1_in1);
-title('Diagrama de Bode - Xeq1 Entrada 1');
-
-figure;
-bode(G1_in2);
-title('Diagrama de Bode - Xeq1 Entrada 2');
-
-figure;
-bode(G2_in1);
-title('Diagrama de Bode - Xeq2 Entrada 1');
-
-figure;
-bode(G2_in2);
-title('Diagrama de Bode - Xeq2 Entrada 2');
 
 %% Respuesta al Impulso 
 
