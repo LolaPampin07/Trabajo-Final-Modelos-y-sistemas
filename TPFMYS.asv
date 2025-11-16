@@ -109,46 +109,58 @@ ylabel('z(t)');
 xlim([0 200]);
 grid on;
 
-%% prueba chat
-% Supongamos que ya tienes cond1, cond2, cond3 definidos (trayectorias)
-% y xi_0, xi_1, xi_2 como puntos iniciales.
+%% prube chat
+n = n + 1;
+figure(n);
 
-figure;
-set(gcf,'Color','w'); % Fondo blanco
+% Ajustar tamaño y fuente
+set(gcf, 'Position', [100, 100, 800, 600]); % tamaño ventana
+sgtitle('Trayectorias Temporales de las soluciones ODE - No Lineal para 3 condiciones iniciales', ...
+        'FontSize', 20, 'FontWeight', 'bold'); % título general
 
-% Vistas (azimuth, elevation)
-views = [30 30; 0 90; 90 0; 45 45];
+% Paleta de colores
+col1 = [0 0.6 0];    % Verde intenso
+col2 = [0 0 0.8];    % Azul profundo
+col3 = [0.8 0 0];    % Rojo fuerte
 
-for i = 1:4
-    subplot(2,2,i);
-    plot3(cond1(:,1), cond1(:,2), cond1(:,3), 'k-', 'LineWidth', 0.5); hold on;
-    plot3(cond2(:,1), cond2(:,2), cond2(:,3), 'k-', 'LineWidth', 0.5);
-    plot3(cond3(:,1), cond3(:,2), cond3(:,3), 'k-', 'LineWidth', 0.5);
-    plot3(xi_0(1), xi_0(2), xi_0(3), 'r*', 'MarkerSize',10,'MarkerFaceColor', 'g'); % Inicio X01
-    plot3(xi_1(1), xi_1(2), xi_1(3), 'go', 'MarkerFaceColor', 'b'); % Inicio x1
-    plot3(xi_2(1), xi_2(2), xi_2(3), 'bo', 'MarkerFaceColor', 'r'); % Inicio x2
-    
-    % Puntos iniciales (opcional)
-    plot3(xi_0(1), xi_0(2), xi_0(3), 'k*', 'MarkerSize', 6);
-    plot3(xi_1(1), xi_1(2), xi_1(3), 'ko', 'MarkerSize', 4);
-    plot3(xi_2(1), xi_2(2), xi_2(3), 'ko', 'MarkerSize', 4);
-    
-    % Ajustes de ejes
-    xlabel('X'); ylabel('Y'); zlabel('Z');
-    grid on; box on;
-    axis tight;
-    view(views(i,:)); % Cambia la vista
-    title(['Vista ', char('a'+(i-1))]); % Etiqueta (a), (b), (c), (d)
-end
+% Subplot 1: X(t)
+subplot(3,1,1);
+plot(t, cond1(:,1), 'Color', col1, 'LineWidth', 0.5); hold on;
+plot(t, cond2(:,1), 'Color', col2, 'LineWidth', 0.5);
+plot(t, cond3(:,1), 'Color', col3, 'LineWidth', 0.5);
+xlabel('Tiempo', 'FontSize', 12);
+ylabel('x(t)', 'FontSize', 12);
+title('Variación de X', 'FontSize', 12);
+xlim([0 200]);
+legend('x01', 'x02', 'x03', 'Location', 'best');
+grid on;
 
-% Exportar en alta resolución
-% print('fase_diagrama_subplots','-dpng','-r300');
+% Subplot 2: Y(t)
+subplot(3,1,2);
+plot(t, cond1(:,2), 'Color', col1, 'LineWidth', 0.5); hold on;
+plot(t, cond2(:,2), 'Color', col2, 'LineWidth', 0.5);
+plot(t, cond3(:,2), 'Color', col3, 'LineWidth', 0.5);
+xlabel('Tiempo', 'FontSize', 12);
+ylabel('y(t)', 'FontSize', 12);
+title('Variación de Y', 'FontSize', 12);
+xlim([0 200]);
+grid on;
 
+% Subplot 3: Z(t)
+subplot(3,1,3);
+plot(t, cond1(:,3), 'Color', col1, 'LineWidth', 0.5); hold on;
+plot(t, cond2(:,3), 'Color', col2, 'LineWidth', 0.5);
+plot(t, cond3(:,3), 'Color', col3, 'LineWidth', 0.5);
+xlabel('Tiempo', 'FontSize', 12);
+ylabel('z(t)', 'FontSize', 12);
+title('Variación de Z', 'FontSize', 12);
+xlim([0 200]);
+grid on;
 %% prube chat
 % Supongamos que ya tienes cond1, cond2, cond3 definidos (trayectorias)
 % y xi_0, xi_1, xi_2 como puntos iniciales.
-
-figure;
+n=n+1;
+figure(n);
 set(gcf,'Color','w'); % Fondo blanco
 
 % Colores para cada condición
@@ -156,19 +168,20 @@ colors = {'g','b','r'}; % verde, azul, rojo
 
 % --- Subplot 1: Plano XY ---
 subplot(2,2,1);
-plot(cond1(:,1), cond1(:,2), 'Color', colors{1}, 'LineWidth', 1.5); hold on;
-plot(cond2(:,1), cond2(:,2), 'Color', colors{2}, 'LineWidth', 1.5);
-plot(cond3(:,1), cond3(:,2), 'Color', colors{3}, 'LineWidth', 1.5);
+plot(cond1(:,1), cond1(:,2), 'Color', colors{1}, 'LineWidth', .5); hold on;
+plot(cond2(:,1), cond2(:,2), 'Color', colors{2}, 'LineWidth', .5);
+plot(cond3(:,1), cond3(:,2), 'Color', colors{3}, 'LineWidth', .5);
 plot(xi_0(1), xi_0(2), '*', 'Color', colors{1}, 'MarkerSize', 8);
 plot(xi_1(1), xi_1(2), 'o', 'Color', colors{2}, 'MarkerSize', 6);
 plot(xi_2(1), xi_2(2), 'o', 'Color', colors{3}, 'MarkerSize', 6);
+legend('Trayectoria 1', 'Trayectoria 2', 'Trayectoria 3', 'Inicio 1', 'Inicio 2', 'Inicio 3','FontSize', 16);
 xlabel('X'); ylabel('Y'); title('Plano XY'); grid on; axis tight;
 
 % --- Subplot 2: Plano ZX ---
 subplot(2,2,2);
-plot(cond1(:,3), cond1(:,1), 'Color', colors{1}, 'LineWidth', 1.5); hold on;
-plot(cond2(:,3), cond2(:,1), 'Color', colors{2}, 'LineWidth', 1.5);
-plot(cond3(:,3), cond3(:,1), 'Color', colors{3}, 'LineWidth', 1.5);
+plot(cond1(:,3), cond1(:,1), 'Color', colors{1}, 'LineWidth', .5); hold on;
+plot(cond2(:,3), cond2(:,1), 'Color', colors{2}, 'LineWidth', .5);
+plot(cond3(:,3), cond3(:,1), 'Color', colors{3}, 'LineWidth', .5);
 plot(xi_0(3), xi_0(1), '*', 'Color', colors{1}, 'MarkerSize', 8);
 plot(xi_1(3), xi_1(1), 'o', 'Color', colors{2}, 'MarkerSize', 6);
 plot(xi_2(3), xi_2(1), 'o', 'Color', colors{3}, 'MarkerSize', 6);
@@ -176,9 +189,9 @@ xlabel('Z'); ylabel('X'); title('Plano ZX'); grid on; axis tight;
 
 % --- Subplot 3: Plano YZ ---
 subplot(2,2,3);
-plot(cond1(:,2), cond1(:,3), 'Color', colors{1}, 'LineWidth', 1.5); hold on;
-plot(cond2(:,2), cond2(:,3), 'Color', colors{2}, 'LineWidth', 1.5);
-plot(cond3(:,2), cond3(:,3), 'Color', colors{3}, 'LineWidth', 1.5);
+plot(cond1(:,2), cond1(:,3), 'Color', colors{1}, 'LineWidth', .5); hold on;
+plot(cond2(:,2), cond2(:,3), 'Color', colors{2}, 'LineWidth', .5);
+plot(cond3(:,2), cond3(:,3), 'Color', colors{3}, 'LineWidth', .5);
 plot(xi_0(2), xi_0(3), '*', 'Color', colors{1}, 'MarkerSize', 8);
 plot(xi_1(2), xi_1(3), 'o', 'Color', colors{2}, 'MarkerSize', 6);
 plot(xi_2(2), xi_2(3), 'o', 'Color', colors{3}, 'MarkerSize', 6);
@@ -186,9 +199,9 @@ xlabel('Y'); ylabel('Z'); title('Plano YZ'); grid on; axis tight;
 
 % --- Subplot 4: Vista 3D ---
 subplot(2,2,4);
-plot3(cond1(:,1), cond1(:,2), cond1(:,3), 'Color', colors{1}, 'LineWidth', 1.5); hold on;
-plot3(cond2(:,1), cond2(:,2), cond2(:,3), 'Color', colors{2}, 'LineWidth', 1.5);
-plot3(cond3(:,1), cond3(:,2), cond3(:,3), 'Color', colors{3}, 'LineWidth', 1.5);
+plot3(cond1(:,1), cond1(:,2), cond1(:,3), 'Color', colors{1}, 'LineWidth', .5); hold on;
+plot3(cond2(:,1), cond2(:,2), cond2(:,3), 'Color', colors{2}, 'LineWidth', .5);
+plot3(cond3(:,1), cond3(:,2), cond3(:,3), 'Color', colors{3}, 'LineWidth', .5);
 plot3(xi_0(1), xi_0(2), xi_0(3), '*', 'Color', colors{1}, 'MarkerSize', 8);
 plot3(xi_1(1), xi_1(2), xi_1(3), 'o', 'Color', colors{2}, 'MarkerSize', 6);
 plot3(xi_2(1), xi_2(2), xi_2(3), 'o', 'Color', colors{3}, 'MarkerSize', 6);
@@ -335,20 +348,27 @@ axis equal;
 n=n+1;
 figure(n);
 subplot(3,1,1);
-plot(t1a, X1a(:,1), 'g');
+plot(t1a, X1a(:,1), 'g');hold on;
+plot(t1a, X1b(:,1), 'r');
+plot(t1a, X1c(:,1), 'b');
 xlabel('Tiempo');
 ylabel('x(t)');
 title('Soluciones Temporales Linealizado en Xeq1 - Condicion Inicial xi_0');
+legend('x01', 'x02','x03');
 grid on;
 
 subplot(3,1,2);
-plot(t1a, X1a(:,2), 'b');
+plot(t1a, X1a(:,2), 'g');hold on;
+plot(t1a, X1b(:,2), 'r');
+plot(t1a, X1c(:,2), 'b');
 xlabel('Tiempo');
 ylabel('y(t)');
 grid on;
 
 subplot(3,1,3);
-plot(t1a, X1a(:,3), 'r');
+plot(t1a, X1a(:,3), 'g');hold on;
+plot(t1a, X1b(:,3), 'r');
+plot(t1a, X1c(:,3), 'b');
 xlabel('Tiempo');
 ylabel('z(t)');
 grid on;
@@ -358,6 +378,8 @@ n=n+1;
 figure(n);
 subplot(3,1,1);
 plot(t2a, X2a(:,1), 'g');
+plot(t2a, X2b(:,1), 'r');
+plot(t2a, X2c(:,1), 'b');
 xlabel('Tiempo');
 ylabel('x(t)');
 title('Soluciones Temporales Linealizado en Xeq2 - Condición Inicial xi_0');
