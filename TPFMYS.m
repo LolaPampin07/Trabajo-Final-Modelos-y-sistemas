@@ -407,7 +407,7 @@ grid on;
 A1 = J_eval1; %xeq1
 A2 = J_eval2; %xeq2
 B = [0 1; 1 0; 0 0]; % B =  matriz de entrada del sistema en espacio de estados -> matriz columnade 3x1 = el sistema tiene 3 estados
-C = [1 1 0]; % C = matriz salida 
+C = [1 0 0]; % C = matriz salida 
 D = [0 0]; % matriz de transmisión directa del sistema -> como no hay se pone 0
 
 [num1_in1, den1] = ss2tf(A1, B, C, D, 1); 
@@ -437,61 +437,75 @@ n=n+1;
 figure(n);
 subplot(2,2,1);
 impulse(G1_in1, t);
-title('Impulso en Xeq1 - Entrada 1 en X');
+title('Respuesta al Impulso - Entrada 1');
 xlabel('Tiempo');
 ylabel('Amplitud');
 grid on;
 
 subplot(2,2,2);
 impulse(G1_in2, t);
-title('Impulso en Xeq1 - Entrada 2 en X');
+title('Respuesta al Impulso - Entrada 2');
 xlabel('Tiempo');
 ylabel('Amplitud');
 grid on;
 
-subplot(2,2,3);
+sgtitle('Sistema linealizado alrededor de Xeq1')
+
+n=n+1;
+figure(n);
+subplot(2,2,1);
 impulse(G2_in1, t);
-title('Impulso en Xeq2 - Entrada 1 en X');
+title('Respuesta al Impulso - Entrada 1');
 xlabel('Tiempo');
 ylabel('Amplitud');
 grid on;
 
-subplot(2,2,4);
+subplot(2,2,2);
 impulse(G2_in2, t);
-title('Impulso en Xeq2 - Entrada 2 en X');
+title('Respuesta al Impulso - Entrada 2');
 xlabel('Tiempo');
 ylabel('Amplitud');
 grid on;
 
-% Respuesta al escalon
+sgtitle('Sistema linealizado alrededor de Xeq2')
+
+
+%% Respuesta al escalon
 
 %Graficos
 n=n+1;
 figure(n);
 subplot(2,2,1);
 step(G1_in1, t);
-title('Escalon en Xeq1 - Entrada 1 en X');
+title('Respuesta al Escalon - Entrada 1');
 xlabel('Tiempo');
 ylabel('Amplitud');
 grid on;
 
 subplot(2,2,2);
 step(G1_in2, t);
-title('Escalon en Xeq1 - Entrada 2 en X');
+title('Respuesta al Escalon - Entrada 2');
 xlabel('Tiempo');
 ylabel('Amplitud');
 grid on;
 
-subplot(2,2,3);
+sgtitle('Sistema linealizado alrededor de Xeq1')
+
+n=n+1;
+figure(n);
+
+subplot(2,2,1);
 step(G2_in1, t);
-title('Escalon en Xeq2 - Entrada 1 en X');
+title('Respuesta al Escalon - Entrada 1');
 xlabel('Tiempo');
 ylabel('Amplitud');
 grid on;
 
-subplot(2,2,4);
+subplot(2,2,2);
 step(G2_in2, t);
-title('Escalon en Xeq2 - Entrada 2 en X');
+title('Respuesta al Escalon - Entrada 2');
 xlabel('Tiempo');
 ylabel('Amplitud');
 grid on;
+
+sgtitle('Sistema linealizado alrededor de Xeq2')
