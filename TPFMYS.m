@@ -292,29 +292,43 @@ disp(V1)
 disp('Autovectores para el segundo punto de equilibrio:')
 disp(V2)
 
-
-% Método manual usando null()
-autovectores1 = zeros(size(J_eval1)); % inicializar
-for i = 1:length(lambda1)
-    v = null(J_eval1 - lambda1(i)*eye(size(J_eval1)));
-    autovectores1(:,i) = v; % guardar autovector
-end
-
-autovectores2 = zeros(size(J_eval2));
-for i = 1:length(lambda2)
-    v = null(J_eval2 - lambda2(i)*eye(size(J_eval2)));
-    autovectores2(:,i) = v;
-end
-
-disp('Autovectores para J_eval1:')
-disp(autovectores1)
-
-disp('Autovectores para J_eval2:')
-disp(autovectores2)
-
-
-
 %% Matriz de transicion de estados
+
+
+function Phi_sym = state_transition_modal_symbolic(A, p)
+% Devuelve Phi(t) = S * exp(Λ t) * S^{-1} como matriz simbólica,
+% con números acotados a p cifras significativas (default: 5).
+    % Símbolo de tiempo
+    syms t real
+
+    % Autovectores y autovalores (numéricos)
+    [S_num, Lambda_num] = eig(A);
+
+    % Preferencia de salida simbólica en flotante (no fracciones enormes)
+    sympref('FloatingPointOutput', true);
+
+    % Convertir a simbólico y acortar con vpa a p cifras
+    S      = vpa(sym(S_num), p);
+    Lambda = vpa(sym(Lambda_num), p);
+
+    % Construir e^{Λ t} (diagonal con e^{λ_i t})
+    expLambda_t = diag(exp(diag(Lambda)*t));
+
+    % Φ(t) = S e^{Λ t} S^{-1}
+    Phi_sym = simplify(S * expLambda_t / S, 'Steps', 50);
+
+    % Mostrar de forma clara
+    fprintf('\nPhi(t) = S * e^{Λ t} * S^{-1} (modal simbólica, %d cifras)\n', p);
+    disp(Phi_sym);
+    % Si querés ver con formato "bonito" en texto ASCII (opcional):
+    % pretty(Phi_sym);
+end
+
+% Forma genérica (simbólica) para J_eval1
+Phi1_sym = state_transition_modal_symbolic(J_eval1,5);
+
+% Forma genérica (simbólica) para J_eval2
+Phi2_sym = state_transition_modal_symbolic(J_eval2,5);
 
 
 %% Matriz fundamental
