@@ -25,7 +25,7 @@ rossler = @(t,x) [-x(2) - x(3);
 [~, cond2] = ode45(rossler, t_span, xi_1);
 [~, cond3] = ode45(rossler, t_span, xi_2);
 
-%% TRAYECTORIAS TEMPORALES SISTEMA LINEALIZADO
+%% TRAYECTORIAS TEMPORALES SISTEMA NO LINEALIZADO
 n=n+1;
 figure(n);
 plot3(cond1(:, 1), cond1(:, 2), cond1(:, 3), 'g-', 'LineWidth', 1.5); hold on;
@@ -109,6 +109,7 @@ ylabel('z(t)');
 xlim([0 200]);
 grid on;
 
+
 %% prube chat
 n = n + 1;
 figure(n);
@@ -156,6 +157,20 @@ ylabel('z(t)', 'FontSize', 12);
 title('Variación de Z', 'FontSize', 12);
 xlim([0 200]);
 grid on;
+%% Puntos de equilibrio
+F = @(x) [-x(2) - x(3);
+           x(1) + a*x(2);
+           b + x(3)*(x(1) - c)];
+
+f=@(z) a*z^2-c*z+b; %3ra ecuacion despejada
+
+z_1=fzero(f,0);z_2=fzero(f,20);
+
+xeq1= [z_1*a;-z_1;z_1]; xeq2= [z_2*a;-z_2;z_2];
+
+disp('Puntos de equilibrio:')
+disp(xeq1')
+disp(xeq2')
 %% prube chat
 % Supongamos que ya tienes cond1, cond2, cond3 definidos (trayectorias)
 % y xi_0, xi_1, xi_2 como puntos iniciales.
@@ -207,31 +222,14 @@ plot3(xi_1(1), xi_1(2), xi_1(3), 'o', 'Color', colors{2}, 'MarkerSize', 6);
 plot3(xi_2(1), xi_2(2), xi_2(3), 'o', 'Color', colors{3}, 'MarkerSize', 6);
 xlabel('X'); ylabel('Y'); zlabel('Z'); title('Vista 3D');
 
-%% Puntos de equilibrio
-F = @(x) [-x(2) - x(3);
-           x(1) + a*x(2);
-           b + x(3)*(x(1) - c)];
 
-f=@(z) a*z^2-c*z+b; %3ra ecuacion despejada
-
-z_1=fzero(f,0);z_2=fzero(f,20);
-
-xeq1= [z_1*a;-z_1;z_1]; xeq2= [z_2*a;-z_2;z_2];
-
-disp('Puntos de equilibrio:')
-disp(xeq1')
-disp(xeq2')
 
 %% Matriz Jacobiana
-
 syms x y z
-
 f1 = -y - z;
 f2 = x + a*y;
 f3 = b + z*(x - c);
-
 Fv = [f1; f2; f3];
-
 % Jacobiana simbólica
 J = jacobian(Fv, [x y z]);
 disp('Matriz Jacobiana simbólica:')
@@ -281,6 +279,45 @@ disp('Para el primer punto de equilibrio')
 disp(lambda1)
 disp('Para el segundo punto de equilibrio')
 disp(lambda2)
+
+%% Autovectores
+
+% Calcular autovectores para J_eval1 y J_eval2
+[V1, D1] = eig(J_eval1);  % V1 = autovectores, D1 = autovalores en diagonal
+[V2, D2] = eig(J_eval2);
+
+disp('Autovectores para el primer punto de equilibrio:')
+disp(V1)
+
+disp('Autovectores para el segundo punto de equilibrio:')
+disp(V2)
+
+
+% Método manual usando null()
+autovectores1 = zeros(size(J_eval1)); % inicializar
+for i = 1:length(lambda1)
+    v = null(J_eval1 - lambda1(i)*eye(size(J_eval1)));
+    autovectores1(:,i) = v; % guardar autovector
+end
+
+autovectores2 = zeros(size(J_eval2));
+for i = 1:length(lambda2)
+    v = null(J_eval2 - lambda2(i)*eye(size(J_eval2)));
+    autovectores2(:,i) = v;
+end
+
+disp('Autovectores para J_eval1:')
+disp(autovectores1)
+
+disp('Autovectores para J_eval2:')
+disp(autovectores2)
+
+
+
+%% Matriz de transicion de estados
+
+
+%% Matriz fundamental
 
 %% Simulaciones para modelo linealizado - Diagramas de Fase
 
@@ -342,65 +379,81 @@ legend('Cond. iniciales xi_0', 'Cond. iniciales xi_1', 'Cond. iniciales xi_2', '
 grid on; hold off;
 axis equal;
 
-%% Soluciones temporales para modelo Linealizado 
+%% Soluciones para sistema linealizado
 
-% Soluciones Temporales para Xeq1 - Usando Condicion inicial xi_0 
-n=n+1;
+% Convertir soluciones linealizadas a coordenadas originales
+X1a_orig = X1a + xeq1';
+X1b_orig = X1b + xeq1';
+X1c_orig = X1c + xeq1';
+
+X2a_orig = X2a + xeq2';
+X2b_orig = X2b + xeq2';
+X2c_orig = X2c + xeq2';
+
+% -------- Xeq1 --------
+n = n + 1;
 figure(n);
+
+% x(t)
 subplot(3,1,1);
-plot(t1a, X1a(:,1), 'g');hold on;
-plot(t1a, X1b(:,1), 'r');
-plot(t1a, X1c(:,1), 'b');
-xlabel('Tiempo');
-ylabel('x(t)');
-title('Soluciones Temporales Linealizado en Xeq1 - Para las 3 condiciones iniciales');
-legend('x01', 'x02','x03');
-grid on;
+plot(t1a, X1a_orig(:,1), 'g'); hold on;
+plot(t1a, X1b_orig(:,1), 'r');
+plot(t1a, X1c_orig(:,1), 'b');
+xlabel('Tiempo'); ylabel('x(t)');
+title('Soluciones Temporales Linealizado en Xeq1 (coordenadas originales)');
+legend('xi_0','xi_1','xi_2','Location','best'); grid on;
+xlim([0 5]);   % <-- aplicar al final
 
+% y(t)
 subplot(3,1,2);
-plot(t1a, X1a(:,2), 'g');hold on;
-plot(t1a, X1b(:,2), 'r');
-plot(t1a, X1c(:,2), 'b');
-xlabel('Tiempo');
-ylabel('y(t)');
-grid on;
+plot(t1a, X1a_orig(:,2), 'g'); hold on;
+plot(t1a, X1b_orig(:,2), 'r');
+plot(t1a, X1c_orig(:,2), 'b');
+xlabel('Tiempo'); ylabel('y(t)'); grid on;
+legend('xi_0','xi_1','xi_2','Location','best');
+xlim([0 5]);   % <-- aplicar al final
 
+% z(t)
 subplot(3,1,3);
-plot(t1a, X1a(:,3), 'g');hold on;
-plot(t1a, X1b(:,3), 'r');
-plot(t1a, X1c(:,3), 'b');
-xlabel('Tiempo');
-ylabel('z(t)');
-grid on;
+plot(t1a, X1a_orig(:,3), 'g'); hold on;
+plot(t1a, X1b_orig(:,3), 'r');
+plot(t1a, X1c_orig(:,3), 'b');
+xlabel('Tiempo'); ylabel('z(t)'); grid on;
+legend('xi_0','xi_1','xi_2','Location','best');
+xlim([0 5]);   % <-- aplicar al final
 
-% Soluciones Temporales para Xeq2 - Usando Condicion inicial xi_0
-n=n+1;
+
+% -------- Xeq2 --------
+n = n + 1;
 figure(n);
+
+% x(t)
 subplot(3,1,1);
-plot(t2a, X2a(:,1), 'g');hold on;
-plot(t2a, X2b(:,1), 'r');
-plot(t2a, X2c(:,1), 'b');
-xlabel('Tiempo');
-ylabel('x(t)');
-title('Soluciones Temporales Linealizado en Xeq2 - Para las 3 condiciones iniciales');
-legend('x01', 'x02','x03');
-grid on;
+plot(t2a, X2a_orig(:,1), 'g'); hold on;
+plot(t2a, X2b_orig(:,1), 'r');
+plot(t2a, X2c_orig(:,1), 'b');
+xlabel('Tiempo'); ylabel('x(t)');
+title('Soluciones Temporales Linealizado en Xeq2 (coordenadas originales)');
+legend('xi_0','xi_1','xi_2','Location','best'); grid on;
+xlim([0 5]);   % <-- aplicar al final
 
+% y(t)
 subplot(3,1,2);
-plot(t2a, X2a(:,2), 'g');hold on;
-plot(t2a, X2b(:,2), 'r');
-plot(t2a, X2c(:,2), 'b');
-xlabel('Tiempo');
-ylabel('y(t)');
-grid on;
+plot(t2a, X2a_orig(:,2), 'g'); hold on;
+plot(t2a, X2b_orig(:,2), 'r');
+plot(t2a, X2c_orig(:,2), 'b');
+xlabel('Tiempo'); ylabel('y(t)'); grid on;
+legend('xi_0','xi_1','xi_2','Location','best');
+xlim([0 5]);   % <-- aplicar al final
 
+% z(t)
 subplot(3,1,3);
-plot(t2a, X2a(:,3), 'g');hold on;
-plot(t2a, X2b(:,3), 'r');
-plot(t2a, X2c(:,3), 'b');
-xlabel('Tiempo');
-ylabel('z(t)');
-grid on;
+plot(t2a, X2a_orig(:,3), 'g'); hold on;
+plot(t2a, X2b_orig(:,3), 'r');
+plot(t2a, X2c_orig(:,3), 'b');
+xlabel('Tiempo'); ylabel('z(t)'); grid on; 
+legend('xi_0','xi_1','xi_2','Location','best');
+xlim([0 5]);
 %% Función Transferencia
 
 %comienzo con 1 0 0 para observar la salida de X
